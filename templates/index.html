@@ -1,1 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cybersecurity News Search</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="search-container">
+        <form id="search-form">
+            <input type="text" id="search-query" placeholder="Enter your search query">
+            <button type="button" id="search-button">Search</button>
+        </form>
+    </div>
+    <div id="search-results">
+        {% for article in articles %}
+            <div class="result">
+                <h3><a href="{{ article.link }}">{{ article.title }}</a></h3>
+                <p>{{ article.snippet }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#search-button').click(function() {
+                var searchQuery = $('#search-query').val();
+                $.ajax({
+                    url: '/get_search_results',
+                    type: 'POST',
+                    data: { search_query: searchQuery },
+                    success: function(response) {
+                        var resultsDiv = $('#search-results');
+                        resultsDiv.empty();
+                        for (var i = 0; i < response.length; i++) {
+                            var article = response[i];
+                            resultsDiv.append('<div class="result"><h3><a href="' + article.link + '">' + article.title + '</a></h3><p>' + article.snippet + '</p></div>');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
 
